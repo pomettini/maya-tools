@@ -1,0 +1,95 @@
+global string $window = "Window";
+
+// If window already exists, it deletes it
+if (`window -q -ex $window`)
+{
+    deleteUI $window;
+}
+
+// I make a new window
+window -t "Chain Maker" $window;
+window -e -s false -rtf true -width 450 $window;
+	columnLayout -adj true;
+		text -h 30 -l "";
+	    floatSliderGrp -label "Random Twist Amount: " -field true -min 0 -max 180 -value 30 twistAmount;
+	    floatSliderGrp -label "Chain Size Multiplier: " -field true -min 1 -max 2 -value 1.4 sizeMultiplier;
+	    text -h 45 -l "";
+	    separator;
+	    rowLayout 
+	    	-numberOfColumns 3 
+          	-columnAlign3 "center" "center" "center";
+			button -label "Create" -width 150 -command "CreateChain()";
+			button -label "Apply" -width 150 -command "ApplyChain()";
+			button -label "Close" -width 150 -command ("deleteUI -window " + $window);
+		setParent..;
+	setParent..;
+showWindow;
+
+global proc CreateChain()
+{
+	// I get the reference to the script window
+	global string $window;
+
+	ApplyChain();
+
+	deleteUI $window;
+}
+
+global proc ApplyChain()
+{
+	// I get the selection and return an error if 2 elements are not selected
+	string $sel[] = `ls -os`;
+	if (`size $sel`!= 2)
+	{
+		print "Error: You need to select 2 elements";
+		return;
+	}
+
+	// I get the value of the sliders
+	float $twistAmount = `floatSliderGrp -q -value twistAmount`;
+	float $sizeMultiplier = `floatSliderGrp -q -value sizeMultiplier`;
+
+	// The first value in the selection is the mesh
+	string $objName = $sel[0];
+	// The second value in the selection is the curve
+	string $curveName = $sel[1];
+
+	// This creates a path animation in order to put meshes along the curve
+	string $mpName = `pathAnimation -fractionMode true -follow true -followAxis 
+	x -upAxis y -worldUpType "vector" -worldUpVector 0 1 0 
+	-inverseUp false -inverseFront false -bank false -startTimeU 1 -endTimeU 120`;
+
+	// I calculate the bounding box of the object
+	float $bbox[] = `exactWorldBoundingBox $objName`;
+	float $objWidth = $bbox[3] - $bbox[0]; // TODO: change value based on the rotation of the link
+	float $curveLen = `arclen $curveName`;
+
+	// I check how many links can be put onto the curve
+	float $nrDuplicatesFloat = ($curveLen / $objWidth) * $sizeMultiplier;
+	int $nrDuplicatesInt = $nrDuplicatesFloat;
+
+	for ($i = 0; $i < $nrDuplicatesInt; $i++)
+	{
+		// I put the mesh on the curve in an uniform way by changing the .uvalue
+		setAttr($mpName + ".uValue") ((1.0 / $nrDuplicatesInt) * $i);
+		xform -q -ws -t $objName;
+		string $duplicate[] = `duplicate $objName`;
+
+		// I clear the selection and get only the current duplicated mesh
+		select -cl;
+		select -r $duplicate[0];
+
+		// I rotate one every two meshes
+		if ($i % 2 == 1)
+		{
+			rotate -r -os -fo 90 0 0;
+		}
+
+		// I randomize the rotation of the link
+		float $randAmount = rand(-$twistAmount, $twistAmount);
+		rotate -r -os -fo $randAmount 0 0;
+	}
+
+	// I destroy the pathAnimation as it won't be needed anymore
+	delete $mpName;
+}
