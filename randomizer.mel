@@ -1,0 +1,149 @@
+string $window = "Window";
+
+// If window already exists, it deletes it
+if (`window -q -ex $window`)
+{
+    deleteUI $window;
+}
+
+// I make a new window
+window -t "Randomizer" $window;
+window -e -h 100 -w 200 $window;
+	// Start of the Translation panel
+	frameLayout -label "Randomize Translation" -collapsable 1;
+	    columnLayout -adj true;
+	        columnLayout;
+	        	floatSliderGrp -label "X Min: " -field true -min -10 -max 10 -value -5 minPosX;
+	        	floatSliderGrp -label "X Max: " -field true -min -10 -max 10 -value 5 maxPosX;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Y Min: " -field true -min -10 -max 10 -value -5 minPosY;
+	        	floatSliderGrp -label "Y Max: " -field true -min -10 -max 10 -value 5 maxPosY;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Z Min: " -field true -min -10 -max 10 -value -5 minPosZ;
+	        	floatSliderGrp -label "Z Max: " -field true -min -10 -max 10 -value 5 maxPosZ;
+	        setParent..;
+	        button -label "Randomize Translation" -command "RandomizeTranslation()";
+	    setParent..;
+	setParent..;
+	// End of the Translation panel
+
+	// Start of the Rotation panel
+	frameLayout -label "Randomize Rotation" -collapsable 1;
+	    columnLayout -adj true;
+	        columnLayout;
+	        	floatSliderGrp -label "X Min: " -field true -min 0 -max 360 -value 0 minRotX;
+	        	floatSliderGrp -label "X Max: " -field true -min 0 -max 360 -value 360 maxRotX;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Y Min: " -field true -min 0 -max 360 -value 0 minRotY;
+	        	floatSliderGrp -label "Y Max: " -field true -min 0 -max 360 -value 360 maxRotY;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Z Min: " -field true -min 0 -max 360 -value 0 minRotZ;
+	        	floatSliderGrp -label "Z Max: " -field true -min 0 -max 360 -value 360 maxRotZ;
+	        setParent..;
+	        button -label "Randomize Rotation" -command "RandomizeRotation()";
+	    setParent..;
+	setParent..;
+	// Start of the Rotation panel
+
+	// Start of the Scale panel
+	frameLayout -label "Randomize Scale" -collapsable 1;
+	    columnLayout -adj true;
+	    	columnLayout;
+	        	floatSliderGrp -label "X Min: " -field true -min 0 -max 10 -value 1 minScaleX;
+	        	floatSliderGrp -label "X Max: " -field true -min 0 -max 10 -value 2 maxScaleX;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Y Min: " -field true -min 0 -max 10 -value 1 minScaleY;
+	        	floatSliderGrp -label "Y Max: " -field true -min 0 -max 10 -value 2 maxScaleY;
+	        setParent..;
+	        columnLayout;
+	        	floatSliderGrp -label "Z Min: " -field true -min 0 -max 10 -value 1 minScaleZ;
+	        	floatSliderGrp -label "Z Max: " -field true -min 0 -max 10 -value 2 maxScaleZ;
+	        setParent..;
+			button -label "Randomize Scale" -command "RandomizeScale()";
+	    setParent..;
+    setParent..;
+    // End of the Scale panel
+showWindow;
+
+global proc RandomizeTranslation()
+{
+	// I put the selection into an array
+	string $selection[] = `ls -sl`;
+
+	for ($element in $selection)
+	{
+		// I get the value of the sliders
+		float $minX = `floatSliderGrp -q -value minPosX`;
+		float $minY = `floatSliderGrp -q -value minPosY`;
+		float $minZ = `floatSliderGrp -q -value minPosZ`;
+
+		float $maxX = `floatSliderGrp -q -value maxPosX`;
+		float $maxY = `floatSliderGrp -q -value maxPosY`;
+		float $maxZ = `floatSliderGrp -q -value maxPosZ`;
+
+		// I get a random value between the minimum and maximum value
+		float $randX = rand($minX, $maxX);
+		float $randY = rand($minY, $maxY);
+		float $randZ = rand($minZ, $maxZ);
+
+		// I set the translate of the objects based on the random number
+		setAttr ($element + ".translate") $randX $randY $randZ;
+	}
+}
+
+global proc RandomizeRotation()
+{
+	// I put the selection into an array
+	string $selection[] = `ls -sl`;
+
+	for ($element in $selection)
+	{
+		// I get the value of the sliders
+		float $minX = `floatSliderGrp -q -value minRotX`;
+		float $minY = `floatSliderGrp -q -value minRotY`;
+		float $minZ = `floatSliderGrp -q -value minRotZ`;
+
+		float $maxX = `floatSliderGrp -q -value maxRotX`;
+		float $maxY = `floatSliderGrp -q -value maxRotY`;
+		float $maxZ = `floatSliderGrp -q -value maxRotZ`;
+
+		// I get a random value between the minimum and maximum value
+		float $randX = rand($minX, $maxX);
+		float $randY = rand($minY, $maxY);
+		float $randZ = rand($minZ, $maxZ);
+
+		// I set the rotation of the objects based on the random number
+		setAttr ($element + ".rotate") $randX $randY $randZ;
+	}
+}
+
+global proc RandomizeScale()
+{
+	// I put the selection into an array
+	string $selection[] = `ls -sl`;
+
+	for ($element in $selection)
+	{
+		// I get the value of the sliders
+		float $minX = `floatSliderGrp -q -value minScaleX`;
+		float $minY = `floatSliderGrp -q -value minScaleY`;
+		float $minZ = `floatSliderGrp -q -value minScaleZ`;
+
+		float $maxX = `floatSliderGrp -q -value maxScaleX`;
+		float $maxY = `floatSliderGrp -q -value maxScaleY`;
+		float $maxZ = `floatSliderGrp -q -value maxScaleZ`;
+
+		// I get a random value between the minimum and maximum value
+		float $randX = rand($minX, $maxX);
+		float $randY = rand($minY, $maxY);
+		float $randZ = rand($minZ, $maxZ);
+
+		// I set the scale of the objects based on the random number
+		setAttr ($element + ".scale") $randX $randY $randZ;
+	}
+}
