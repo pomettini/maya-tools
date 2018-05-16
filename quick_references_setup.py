@@ -6,6 +6,10 @@ Tool Maya che date N reference te le piazza automaticamente in scena
 * Anche da cartella in automatico
 * Devono essere locked e messe su un altro layer
 * Slider per settare size e distanza
+
+
+* Tasto add a sinistra
+* Fare un livello per ogni piano
 '''
 
 import maya.cmds as cmds
@@ -65,45 +69,47 @@ def RefreshAllUIImgPath():
 
 def CreatePlane(planeType):
     global planes
+
     planeSize = cmds.intSliderGrp('plane_size', q=True, v=True)
     planeDistance = cmds.intSliderGrp('plane_distance', q=True, v=True)
 
     halfSize = (planeSize / 2.0)
 
-    print(halfSize)
+    if planeDistance is -1:
+        planeDistance = -halfSize
 
     if planeType == PlaneType.TOP:
         # Top
         plane = cmds.polyPlane(n='ref_top', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 1, 0))
-        cmds.setAttr(plane[0]+'.translate', 0, (planeSize + planeDistance), 0)
+        cmds.setAttr(plane[0]+'.translate', 0, -planeDistance, 0)
 
     elif planeType == PlaneType.BOTTOM:
         # Bottom
         plane = cmds.polyPlane(n='ref_bottom', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 1, 0))
-        cmds.setAttr(plane[0]+'.translate', 0, -planeDistance, 0)
+        cmds.setAttr(plane[0]+'.translate', 0, (planeSize + planeDistance), 0)
         cmds.setAttr(plane[0]+'.rotate', 0, 0, 180)
 
     elif planeType == PlaneType.SIDE_L:
         # Left Side
         plane = cmds.polyPlane(n='ref_side_l', w=planeSize, h=planeSize, sx=1, sy=1, ax=(1, 0, 0))
-        cmds.setAttr(plane[0]+'.translate', -(halfSize + planeDistance), halfSize, 0)
-        cmds.setAttr(plane[0]+'.rotate', 0, 0, 180)
+        cmds.setAttr(plane[0]+'.translate', (halfSize + planeDistance), halfSize, 0)
+        cmds.setAttr(plane[0]+'.rotate', 180, 0, 180)
 
     elif planeType == PlaneType.SIDE_R:
         # Rignt Side
         plane = cmds.polyPlane(n='ref_side_r', w=planeSize, h=planeSize, sx=1, sy=1, ax=(1, 0, 0))
-        cmds.setAttr(plane[0]+'.translate', (halfSize + planeDistance), halfSize, 0)
+        cmds.setAttr(plane[0]+'.translate', -(halfSize + planeDistance), halfSize, 0)
         cmds.setAttr(plane[0]+'.rotate', 0, 0, 0)
 
     elif planeType == PlaneType.FRONT:
         # Front
         plane = cmds.polyPlane(n='ref_front', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 0, 1))
-        cmds.setAttr(plane[0]+'.translate', 0, halfSize, (halfSize + planeDistance))
+        cmds.setAttr(plane[0]+'.translate', 0, halfSize, -(halfSize + planeDistance))
 
     elif planeType == PlaneType.BACK:
         # Back
         plane = cmds.polyPlane(n='ref_back', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 0, 1))
-        cmds.setAttr(plane[0]+'.translate', 0, halfSize, -(halfSize + planeDistance))
+        cmds.setAttr(plane[0]+'.translate', 0, halfSize, (halfSize + planeDistance))
         cmds.setAttr(plane[0]+'.rotate', 0, 180, 0)
 
     return plane
@@ -156,21 +162,48 @@ def SearchReferencesInFolder():
 
 
 def CreateReferenceLayer():
-    cmds.createDisplayLayer(n='ReferenceLayer', empty=True)
-    cmds.setAttr('ReferenceLayer.displayType', 2)
+    if not cmds.objExists('ReferenceLayer'):
+        cmds.createDisplayLayer(n='ReferenceLayer', empty=True)
+        cmds.setAttr('ReferenceLayer.displayType', 2)
 
 
 def AddMeshToReferenceLayer(meshName):
     cmds.editDisplayLayerMembers('ReferenceLayer', meshName)
 
 
+def EnableBackfaceCulling(meshName):
+    cmds.setAttr(meshName[0]+'.backfaceCulling', 3)
+
+
 def GeneratePlanes():
     global planes
+
     CreateReferenceLayer()
+
     for planeType in planes:
         plane = CreatePlane(planeType)
         ApplyTexture(plane, planes[planeType])
         AddMeshToReferenceLayer(plane)
+        EnableBackfaceCulling(plane)
+
+
+def FunctionalTest():
+    global planes
+
+    TestResetHypershade()
+    TestResetScene()
+    TestResetLayers()
+
+    planes = {
+        'top': '/Users/Giorgio/Desktop/TestBlueprints/top.png',
+        'bottom': '/Users/Giorgio/Desktop/TestBlueprints/ref_bottom.png',
+        'side_l': '/Users/Giorgio/Desktop/TestBlueprints/left.png',
+        'side_r': '/Users/Giorgio/Desktop/TestBlueprints/caneright.png',
+        'front': '/Users/Giorgio/Desktop/TestBlueprints/front.png',
+        'back': '/Users/Giorgio/Desktop/TestBlueprints/img-back.png'
+    }
+
+    GeneratePlanes()
 
 
 def InitUI():
@@ -180,50 +213,55 @@ def InitUI():
         cmds.deleteUI(win_name)
 
     cmds.window(win_name, t='Quick References Setup')
-    cmds.window(win_name, e=True, height=100, width=500, sizeable=False)
+    cmds.window(win_name, e=True, height=100, width=600, sizeable=False)
     cmds.columnLayout(adj=True)
 
     cmds.intSliderGrp('plane_size', f=True, l='Plane Size', minValue=1, maxValue=10, value=5)
-    cmds.intSliderGrp('plane_distance', f=True, l='Plane Distance', minValue=0, maxValue=10, value=1)
+    cmds.intSliderGrp('plane_distance', f=True, l='Plane Distance', minValue=-1, maxValue=10, value=1)
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('top_field')
     cmds.button(label='Select Top', w=100, c=Callback(LoadImagePath, PlaneType.TOP))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('bottom_field')
     cmds.button(label='Select Bottom', w=100, c=Callback(LoadImagePath, PlaneType.BOTTOM))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('side_l_field')
     cmds.button(label='Select Left Side', w=100, c=Callback(LoadImagePath, PlaneType.SIDE_L))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('side_r_field')
     cmds.button(label='Select Right Side', w=100, c=Callback(LoadImagePath, PlaneType.SIDE_R))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('front_field')
     cmds.button(label='Select Front', w=100, c=Callback(LoadImagePath, PlaneType.FRONT))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(adj=True, nc=2)
+    cmds.rowLayout(adj=True, nc=3)
     cmds.textField('back_field')
     cmds.button(label='Select Back', w=100, c=Callback(LoadImagePath, PlaneType.BACK))
+    cmds.button(label=' X ')
     cmds.setParent('..')
 
-    cmds.rowLayout(nc=2)
-    cmds.button(label='Load from folder', h=50, w=250, c=Callback(SearchReferencesInFolder))
-    cmds.button(label='Generate', h=50, w=250, c=Callback(GeneratePlanes))
+    cmds.rowLayout(nc=3)
+    cmds.button(label='Remove References', h=50, w=200)
+    cmds.button(label='Load from folder', h=50, w=200, c=Callback(SearchReferencesInFolder))
+    cmds.button(label='Generate', h=50, w=200, c=Callback(GeneratePlanes))
     cmds.setParent('..')
     cmds.showWindow(win_name)
 
 
-# TestResetHypershade()
-# TestResetScene()
-# TestResetLayers()
 InitUI()
+#FunctionalTest()
