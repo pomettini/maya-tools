@@ -3,13 +3,10 @@
 '''
 Tool Maya che date N reference te le piazza automaticamente in scena
 (in base a top, side, front)
-* Anche da cartella in automatico
-* Devono essere locked e messe su un altro layer
-* Slider per settare size e distanza
 
 
-* Tasto add a sinistra
 * Fare un livello per ogni piano
+* Risolvere errori
 '''
 
 import maya.cmds as cmds
@@ -17,6 +14,7 @@ from pymel.all import Callback
 import re
 
 
+# Enumerator that contains all the Plane types
 class PlaneType(object):
     TOP = 'top'
     BOTTOM = 'bottom'
@@ -26,6 +24,7 @@ class PlaneType(object):
     BACK = 'back'
 
 
+# All the stuff about the reference planes will be put here
 planes = {}
 
 
@@ -41,6 +40,7 @@ def TestResetHypershade():
     cmds.delete(materials)
 
 
+# TEST Removes all the layers
 def TestResetLayers():
     layers = cmds.ls(type='displayLayer')
     cmds.delete(layers)
@@ -49,12 +49,18 @@ def TestResetLayers():
 def LoadImagePath(planeType):
     imgFilter = 'All Image files (*.jpg *.gif *.png);;'
     imgPath = cmds.fileDialog2(fileFilter=imgFilter, dialogStyle=1, fileMode=1)
-    SetImagePath(planeType, imgPath[0])
-    RefreshUIImgPath(planeType, imgPath[0])
+
+    # I put the plane image on dictionary/ui only if it's valid
+    if imgPath is not None:
+        SetImagePath(planeType, imgPath[0])
+        RefreshUIImgPath(planeType, imgPath[0])
+    else:
+        cmds.confirmDialog(m='Please enter a valid image path')
 
 
 def SetImagePath(planeType, imagePath):
     global planes
+    # I put the image path on the planes dictionary
     planes[planeType] = imagePath
 
 
@@ -62,9 +68,23 @@ def RefreshUIImgPath(planeType, imagePath):
     cmds.textField(planeType+'_field', edit=True, tx=str(imagePath))
 
 
+def EmptyImgPath(planeType):
+    global planes
+    # I remove the plane from the dictionary and empty the text field
+    del planes[planeType]
+    cmds.textField(planeType+'_field', edit=True, tx=str(''))
+
+
 def RefreshAllUIImgPath():
     for plane in planes:
         RefreshUIImgPath(plane, planes[plane])
+
+
+def RemoveAllPlaneReferences():
+    # I remove all the planes, materials and the reference layer
+    refElements = cmds.ls('ref_*')
+    cmds.delete(refElements)
+    cmds.delete('ReferenceLayer')
 
 
 def CreatePlane(planeType):
@@ -75,6 +95,7 @@ def CreatePlane(planeType):
 
     halfSize = (planeSize / 2.0)
 
+    # If the user puts -1 as the plane distance all the planes will be on the origin
     if planeDistance is -1:
         planeDistance = -halfSize
 
@@ -119,6 +140,7 @@ def ApplyTexture(mesh, texturePath):
     material = CreateMaterialFromPath(texturePath)
     cmds.select(mesh[0])
     cmds.hyperShade(assign=material)
+    cmds.rename(material, mesh[0]+'_mat')
 
 
 def CreateMaterialFromPath(texturePath):
@@ -141,10 +163,21 @@ def CreateMaterialFromPath(texturePath):
 def SearchReferencesInFolder():
     global planes
 
-    directory = cmds.fileDialog2(dialogStyle=1, fileMode=3)[0]
+    refDir = cmds.fileDialog2(dialogStyle=1, fileMode=3)
+
+    # I do stuff on the directory only if it's not empty
+    if refDir is None:
+        cmds.confirmDialog(m='Please enter a valid directory path')
+        return
+
+    directory = refDir[0]
     files = cmds.getFileList(folder=directory)
 
     for file in files:
+        # If the path is empty I don't add the plane
+        if file is None:
+            continue
+
         if re.search(r'top', file):
             planes[PlaneType.TOP] = directory+'/'+file
         elif re.search(r'bottom', file):
@@ -162,6 +195,7 @@ def SearchReferencesInFolder():
 
 
 def CreateReferenceLayer():
+    # I create the Ref layer once and set it as a reference layer
     if not cmds.objExists('ReferenceLayer'):
         cmds.createDisplayLayer(n='ReferenceLayer', empty=True)
         cmds.setAttr('ReferenceLayer.displayType', 2)
@@ -217,46 +251,46 @@ def InitUI():
     cmds.columnLayout(adj=True)
 
     cmds.intSliderGrp('plane_size', f=True, l='Plane Size', minValue=1, maxValue=10, value=5)
-    cmds.intSliderGrp('plane_distance', f=True, l='Plane Distance', minValue=-1, maxValue=10, value=1)
+    cmds.intSliderGrp('plane_distance', f=True, l='Plane Distance', minValue=-1, maxValue=10, value=-1)
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('top_field')
-    cmds.button(label='Select Top', w=100, c=Callback(LoadImagePath, PlaneType.TOP))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Top', c=Callback(LoadImagePath, PlaneType.TOP))
+    cmds.textField('top_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.TOP))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('bottom_field')
-    cmds.button(label='Select Bottom', w=100, c=Callback(LoadImagePath, PlaneType.BOTTOM))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Bottom', c=Callback(LoadImagePath, PlaneType.BOTTOM))
+    cmds.textField('bottom_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.BOTTOM))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('side_l_field')
-    cmds.button(label='Select Left Side', w=100, c=Callback(LoadImagePath, PlaneType.SIDE_L))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Left Side', c=Callback(LoadImagePath, PlaneType.SIDE_L))
+    cmds.textField('side_l_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.SIDE_L))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('side_r_field')
-    cmds.button(label='Select Right Side', w=100, c=Callback(LoadImagePath, PlaneType.SIDE_R))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Right Side', c=Callback(LoadImagePath, PlaneType.SIDE_R))
+    cmds.textField('side_r_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.SIDE_R))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('front_field')
-    cmds.button(label='Select Front', w=100, c=Callback(LoadImagePath, PlaneType.FRONT))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Front', c=Callback(LoadImagePath, PlaneType.FRONT))
+    cmds.textField('front_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.FRONT))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.textField('back_field')
-    cmds.button(label='Select Back', w=100, c=Callback(LoadImagePath, PlaneType.BACK))
-    cmds.button(label=' X ')
+    cmds.button(label='Select Back', c=Callback(LoadImagePath, PlaneType.BACK))
+    cmds.textField('back_field', w=450)
+    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.BACK))
     cmds.setParent('..')
 
     cmds.rowLayout(nc=3)
-    cmds.button(label='Remove References', h=50, w=200)
+    cmds.button(label='Remove References', h=50, w=200, c=Callback(RemoveAllPlaneReferences))
     cmds.button(label='Load from folder', h=50, w=200, c=Callback(SearchReferencesInFolder))
     cmds.button(label='Generate', h=50, w=200, c=Callback(GeneratePlanes))
     cmds.setParent('..')
@@ -264,4 +298,4 @@ def InitUI():
 
 
 InitUI()
-#FunctionalTest()
+# FunctionalTest()
