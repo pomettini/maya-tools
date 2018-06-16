@@ -6,8 +6,8 @@ Maya scripts I made in order to speed up my workflow
 
 * Open Maya (whatever version is fine)
 * Click on the [small button with a semicolumn](screenshots/MayaScriptEditorButton.png?raw=true) on the lower-right edge of the screen
-* On the new window that has opened click on File > Load script
-* Click on the ExecuteAll button (the icon that looks like a fast-forward button)
+* On the [new window that has been opened](screenshots/MayaScriptEditor.png?raw=true) and click on File > Load script
+* Click on the [ExecuteAll button](screenshots/MayaExecuteAllButton.png?raw=true) (the icon that looks like a fast-forward button)
 
 # How to use the scripts
 
