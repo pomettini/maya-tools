@@ -18,7 +18,8 @@ Maya scripts I made in order to speed up my workflow
 ## clean_export_routine.py
 
 ## even_selection.py
-### Given a selection, deselects the odd elements
+
+#### Given a selection, deselects the odd elements
 
 * Select any number of faces, vertices or edges
 * Run the script
