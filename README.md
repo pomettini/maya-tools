@@ -19,6 +19,11 @@ Maya scripts I made in order to speed up my workflow
 
 ## even_selection.py
 
+### Given a selection, deselects the odd elements
+
+* Select any number of faces, vertices or edges
+* Run the script
+
 ## quick_references_setup.py
 
 ## quick_texture_material.py
