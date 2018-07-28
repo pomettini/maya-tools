@@ -19,13 +19,20 @@ Maya scripts I made in order to speed up my workflow
 
 ## even_selection.py
 
-#### Given a selection, deselects the odd elements
+#### Given a selection, it deselects the odd elements
 
 * Select any number of faces, vertices or edges
 * Run the script
+* You should have only the even elements selected
 
 ## quick_references_setup.py
 
 ## quick_texture_material.py
+
+#### Quickly creates a new material from an image
+
+* Run the script
+* Select the image that you want to put on the material
+* You should have a material with the image you have chosen
 
 ## randomizer.mel
