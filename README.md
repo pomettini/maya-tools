@@ -19,6 +19,8 @@ Maya scripts I made in order to speed up my workflow
 
 ## even_selection.py
 
+## quick_checker.py
+
 ## quick_references_setup.py
 
 ## quick_texture_material.py

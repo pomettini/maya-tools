@@ -2,18 +2,18 @@ import maya.cmds as cmds
 from pymel.all import Callback
 
 # TEST Reset the scene to the original state
-def TestReset():
+def BU_TestReset():
 	cmds.select(all = True)
 	cmds.delete()
 
 # TEST Create two objects that will work with booleans
-def TestCreate():
+def BU_TestCreate():
 	cmds.polyCube(n = 'Object001')
 	cmds.polyCube(n = 'Object002')
 	cmds.move(0, 0, 0, 'Object001')
 	cmds.move(0.5, 0.5, 0.5, 'Object002')
 
-def DiffIntersection():
+def BU_DiffIntersection():
 	selection = cmds.ls(sl=True)
 
 	# If you don't have exactly two meshes selected it ends the function
@@ -33,7 +33,7 @@ def DiffIntersection():
 	# Then I do the intersection
 	cmds.polyCBoolOp(firstObjCopy, secondObjCopy, op=3)
 
-def IntersectionPreserveMeshes():
+def BU_IntersectionPreserveMeshes():
 	selection = cmds.ls(sl=True)
 
 	# If you don't have exactly two meshes selected it ends the function
@@ -58,37 +58,37 @@ def IntersectionPreserveMeshes():
 
 	# This will get preserve all the meshes used for the intersection
 	intersObjCopy = cmds.duplicate(intersObj)
-	cmd.polyCBoolOp(secondObjCopy2, intersObjCopy, op=2)
+	cmds.polyCBoolOp(secondObjCopy2, intersObjCopy, op=2)
 
-def FunctionalTest1():
-	TestReset()
-	TestCreate()
+def BU_FunctionalTest1():
+	BU_TestReset()
+	BU_TestCreate()
 	cmds.select('Object001')
 	cmds.select('Object002', add=True)
-	DiffIntersection()
+	BU_DiffIntersection()
 
-def FunctionalTest2():
-	TestReset()
-	TestCreate()
+def BU_FunctionalTest2():
+	BU_TestReset()
+	BU_TestCreate()
 	cmds.select('Object002')
 	cmds.select('Object001', add=True)
-	DiffIntersection()
+	BU_DiffIntersection()
 
-def FunctionalTest3():
-	TestReset()
-	TestCreate()
+def BU_FunctionalTest3():
+	BU_TestReset()
+	BU_TestCreate()
 	cmds.select('Object001')
 	cmds.select('Object002', add=True)
-	IntersectionPreserveMeshes()
+	BU_IntersectionPreserveMeshes()
 
-def FunctionalTest4():
-	TestReset()
-	TestCreate()
+def BU_FunctionalTest4():
+	BU_TestReset()
+	BU_TestCreate()
 	cmds.select('Object002')
 	cmds.select('Object001', add=True)
-	IntersectionPreserveMeshes()
+	BU_IntersectionPreserveMeshes()
 
-def InitUI():
+def BU_InitUI():
 	win_name = 'diff_intersection'
 
 	if cmds.window(win_name, q=True, ex=True):
@@ -97,9 +97,9 @@ def InitUI():
 	cmds.window(win_name, t='Boolean Utilities')
 	cmds.window(win_name, e=True, height=100, width=300, sizeable=False)
 	cmds.columnLayout(adj=True)
-	cmds.button(l='Difference + Intersection', height=50, c=Callback(DiffIntersection))
-	cmds.button(l='Intersection (Preserve Meshes)', height=50, c=Callback(IntersectionPreserveMeshes))
+	cmds.button(l='Difference + Intersection', height=50, c=Callback(BU_DiffIntersection))
+	cmds.button(l='Intersection (Preserve Meshes)', height=50, c=Callback(BU_IntersectionPreserveMeshes))
 	cmds.setParent('..')
 	cmds.showWindow(win_name)
 
-InitUI()
+BU_InitUI()
