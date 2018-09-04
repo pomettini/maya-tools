@@ -13,11 +13,20 @@ Maya scripts I made in order to speed up my workflow
 
 ## boolean_utilities.py
 
-#### 
+#### Does a boolean intersection and preserves the two intersectated meshes
 
-## chain_maker.mel (deprecated, needs to be rewritten in Python)
+* Run the script
+* Press the button **difference + intersection** or
+* Press the button **intersection (preserve meshes)**
+
+## chain_maker.mel _(deprecated, needs to be rewritten in Python)_
 
 ## clean_export_routine.py
+
+#### Merges all the meshes, sets pivot in the bottom center, freezes transforms and deletes history
+
+* Run the script
+* Export the model
 
 ## even_selection.py
 
@@ -45,4 +54,4 @@ Maya scripts I made in order to speed up my workflow
 * Select the image that you want to put on the material
 * You should have a material with the image you have chosen
 
-## randomizer.mel (deprecated, needs to be rewritten in Python)
+## randomizer.mel _(deprecated, needs to be rewritten in Python)_
