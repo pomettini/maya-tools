@@ -1,16 +1,16 @@
 import maya.cmds as cmds
 
 # TEST Reset the scene to the original state
-def TestResetScene():
+def QTM_TestResetScene():
 	cmds.select(all=True)
 	cmds.delete()
 
 # TEST Reset hypeshade to the original state
-def TestResetHypershade():
+def QTM_TestResetHypershade():
 	materials = cmds.ls(type='shadingDependNode')
 	cmds.delete(materials)
 
-def LoadFilePrompt():
+def QTM_LoadFilePrompt():
 	# Opens a prompt that ask user to select only images
 	imgFilter = 'All Image files (*.jpg *.gif *.png);;'
 	imgPath = cmds.fileDialog2(fileFilter=imgFilter, dialogStyle=1, fileMode=1)
@@ -18,8 +18,8 @@ def LoadFilePrompt():
 	if imgPath is not None:
 		return imgPath
 
-def NewTextureMaterial():
-	imgPath = LoadFilePrompt()
+def QTM_NewTextureMaterial():
+	imgPath = QTM_LoadFilePrompt()
 	# Creates a new lambert
 	myMaterial = cmds.shadingNode('lambert', asShader=True)
 	# Creates a shading node for the file
@@ -35,16 +35,16 @@ def NewTextureMaterial():
 	# Returns the material
 	return myMaterial
 
-def FunctionalTest1():
+def QTM_FunctionalTest1():
 	# Resets everything
-	TestResetScene()
-	TestResetHypershade()
+	QTM_TestResetScene()
+	QTM_TestResetHypershade()
 	# Creates a plane
 	cmds.polyPlane(name='Object001', w=5, h=5, sx=True, sy=True)
-	myMaterial = NewTextureMaterial()
+	myMaterial = QTM_NewTextureMaterial()
 	# Selects the object and applies the new material
 	cmds.select('Object001')
 	cmds.hyperShade(assign=myMaterial)
 
-#FunctionalTest1()
-NewTextureMaterial()
+# QTM_FunctionalTest1()
+QTM_NewTextureMaterial()

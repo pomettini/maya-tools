@@ -1,22 +1,22 @@
 import maya.cmds as cmds
 
 
-selected_objects = ""
+qc_selected_objects = ""
 
 
 # TEST Reset the scene to the original state
-def TestResetScene():
+def QC_TestResetScene():
     cmds.select(all=True)
     cmds.delete()
 
 
 # TEST Reset hypeshade to the original state
-def TestResetHypershade():
+def QC_TestResetHypershade():
     materials = cmds.ls(type='shadingDependNode')
     cmds.delete(materials)
 
 
-def NewCheckerMaterial():
+def QC_NewCheckerMaterial():
     # Creates a new lambert
     myMaterial = cmds.shadingNode('lambert', asShader=True)
     # Creates a shading node for the file
@@ -36,35 +36,35 @@ def NewCheckerMaterial():
     return myMaterial
 
 
-def ApplyMaterialToSelectedMesh(material):
-    global selected_objects
+def QC_ApplyMaterialToSelectedMesh(material):
+    global qc_selected_objects
     # Gets the selected objects and applies the new material
-    cmds.select(selected_objects)
+    cmds.select(qc_selected_objects)
     cmds.hyperShade(assign=material)
 
 
-def QuickChecker():
-    global selected_objects
-    selected_objects = cmds.ls(sl=True)
-    myMaterial = NewCheckerMaterial()
-    ApplyMaterialToSelectedMesh(myMaterial)
+def QC_QuickChecker():
+    global qc_selected_objects
+    qc_selected_objects = cmds.ls(sl=True)
+    myMaterial = QC_NewCheckerMaterial()
+    QC_ApplyMaterialToSelectedMesh(myMaterial)
 
 
-def FunctionalTest1():
+def QC_FunctionalTest1():
     # Resets everything
-    TestResetScene()
-    TestResetHypershade()
+    QC_TestResetScene()
+    QC_TestResetHypershade()
     # Creates a sphere
     cmds.polySphere(n='Object001')
     cmds.select('Object001')
     # Runs the script
-    QuickChecker()
+    QC_QuickChecker()
 
 
-def FunctionalTest2():
+def QC_FunctionalTest2():
     # Resets everything
-    TestResetScene()
-    TestResetHypershade()
+    QC_TestResetScene()
+    QC_TestResetHypershade()
     # Creates two spheres
     cmds.polySphere(n='Object001')
     cmds.polySphere(n='Object002')
@@ -75,9 +75,9 @@ def FunctionalTest2():
     cmds.select('Object001')
     cmds.select('Object002', add=True)
     # Runs the script
-    QuickChecker()
+    QC_QuickChecker()
 
 
-# FunctionalTest1()
-# FunctionalTest2()
-QuickChecker()
+# QC_FunctionalTest1()
+# QC_FunctionalTest2()
+QC_QuickChecker()

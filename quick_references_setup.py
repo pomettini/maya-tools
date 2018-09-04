@@ -1,12 +1,12 @@
 # coding=utf-8
 
 '''
-Tool Maya che date N reference te le piazza automaticamente in scena
-(in base a top, side, front)
+Puts plane references in the scene automatically
+Based on top, side and front
 
-
-* Fare un livello per ogni piano
-* Risolvere errori
+TODO:
+* Make a level for each reference
+* Function and global variables needs prefixes!
 '''
 
 import maya.cmds as cmds
