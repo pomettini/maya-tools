@@ -13,7 +13,9 @@ Maya scripts I made in order to speed up my workflow
 
 ## boolean_utilities.py
 
-## chain_maker.mel
+#### 
+
+## chain_maker.mel (deprecated, needs to be rewritten in Python)
 
 ## clean_export_routine.py
 
@@ -27,6 +29,14 @@ Maya scripts I made in order to speed up my workflow
 
 ## quick_references_setup.py
 
+#### Loads and positions reference images on the scene automatically
+
+* Run the script
+* Add references images manually
+* Alternatively, you can select a folder containing them by pressing **load from folder** button
+* Press the **generate** button
+* When you're done, press the button **remove references**
+
 ## quick_texture_material.py
 
 #### Quickly creates a new material from an image
@@ -35,4 +45,4 @@ Maya scripts I made in order to speed up my workflow
 * Select the image that you want to put on the material
 * You should have a material with the image you have chosen
 
-## randomizer.mel
+## randomizer.mel (deprecated, needs to be rewritten in Python)
