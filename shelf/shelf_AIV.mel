@@ -1,0 +1,163 @@
+global proc shelf_AIV () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 0
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Boolean Utilities" 
+        -enableBackground 0
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Boolean Utilities" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/boolean_utilities.png" 
+        -image1 "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/boolean_utilities.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import maya.cmds as cmds\nfrom pymel.all import Callback\n\n\n# TEST Reset the scene to the original state\ndef BU_TestReset():\n    cmds.select(all = True)\n    cmds.delete()\n\n\n# TEST Create two objects that will work with booleans\ndef BU_TestCreate():\n    cmds.polyCube(n = 'Object001')\n    cmds.polyCube(n = 'Object002')\n    cmds.move(0, 0, 0, 'Object001')\n    cmds.move(0.5, 0.5, 0.5, 'Object002')\n\n\ndef BU_DiffIntersection():\n    selection = cmds.ls(sl=True)\n\n\n    # If you don't have exactly two meshes selected it ends the function\n    if len(selection) > 2 or len(selection) < 2:\n        print \"You have to select two elements\"\n        return\n\n\n    firstObj = selection[0]\n    secondObj = selection[1]\n\n\n    # I duplicate the objects to use it again\n    firstObjCopy = cmds.duplicate(firstObj)\n    secondObjCopy = cmds.duplicate(secondObj)\n\n\n    # First I do the difference between the first and the second object\n    cmds.polyCBoolOp(firstObj, secondObj, op=2)\n    # Then I do the intersection\n    cmds.polyCBoolOp(firstObjCopy, secondObjCopy, op=3)\n\n\ndef BU_IntersectionPreserveMeshes():\n    selection = cmds.ls(sl=True)\n\n\n    # If you don't have exactly two meshes selected it ends the function\n    if len(selection) > 2 or len(selection) < 2:\n        print \"You have to select two elements\"\n        return\n\n\n    firstObj = selection[0]\n    secondObj = selection[1]\n\n\n    # I duplicate the objects to use it again\n    firstObjCopy = cmds.duplicate(firstObj)\n    secondObjCopy = cmds.duplicate(secondObj)\n\n\n    # This will be used later as well\n    secondObjCopy2 = cmds.duplicate(secondObj)\n\n\n    # First I do the difference between the first and the second object\n    cmds.polyCBoolOp(firstObj, secondObj, op=2)\n    # Then I do the intersection\n    intersObj = cmds.polyCBoolOp(firstObjCopy, secondObjCopy, op=3)\n\n\n    # This will get preserve all the meshes used for the intersection\n    intersObjCopy = cmds.duplicate(intersObj)\n    cmd.polyCBoolOp(secondObjCopy2, intersObjCopy, op=2)\n\n\ndef BU_FunctionalTest1():\n    BU_TestReset()\n    BU_TestCreate()\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    BU_DiffIntersection()\n\n\ndef BU_FunctionalTest2():\n    BU_TestReset()\n    BU_TestCreate()\n    cmds.select('Object002')\n    cmds.select('Object001', add=True)\n    BU_DiffIntersection()\n\n\ndef BU_FunctionalTest3():\n    BU_TestReset()\n    BU_TestCreate()\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    BU_IntersectionPreserveMeshes()\n\n\ndef BU_FunctionalTest4():\n    BU_TestReset()\n    BU_TestCreate()\n    cmds.select('Object002')\n    cmds.select('Object001', add=True)\n    BU_IntersectionPreserveMeshes()\n\n\ndef BU_InitUI():\n    win_name = 'diff_intersection'\n\n\n    if cmds.window(win_name, q=True, ex=True):\n        cmds.deleteUI(win_name)\n\n\n    cmds.window(win_name, t='Boolean Utilities')\n    cmds.window(win_name, e=True, height=100, width=300, sizeable=False)\n    cmds.columnLayout(adj=True)\n    cmds.button(l='Difference + Intersection', height=50, c=Callback(BU_DiffIntersection))\n    cmds.button(l='Intersection (Preserve Meshes)', height=50, c=Callback(BU_IntersectionPreserveMeshes))\n    cmds.setParent('..')\n    cmds.showWindow(win_name)\n\n\nBU_InitUI()" 
+        -sourceType "python" 
+        -commandRepeatable 0
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 0
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Quick References Setup" 
+        -enableBackground 0
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Quick References Setup" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/quick_references_setup.png" 
+        -image1 "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/quick_references_setup.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import maya.cmds as cmds\n\n\nselected_objects = \"\"\n\n\n# TEST Reset the scene to the original state\ndef TestResetScene():\n    cmds.select(all=True)\n    cmds.delete()\n\n\n# TEST Reset hypeshade to the original state\ndef TestResetHypershade():\n    materials = cmds.ls(type='shadingDependNode')\n    cmds.delete(materials)\n\n\ndef NewCheckerMaterial():\n    # Creates a new lambert\n    myMaterial = cmds.shadingNode('lambert', asShader=True)\n    # Creates a shading node for the file\n    myChecker = cmds.shadingNode('checker', asTexture=True)\n\n    myPlaceTex = cmds.shadingNode('place2dTexture', asUtility=True)\n\n    cmds.setAttr(myPlaceTex+'.repeatU', 10)\n    cmds.setAttr(myPlaceTex+'.repeatV', 10)\n\n    cmds.connectAttr(myPlaceTex+'.outUV', myChecker+'.uv')\n\n    cmds.connectAttr(myPlaceTex+'.outUvFilterSize', myChecker+'.uvFilterSize')\n\n    cmds.connectAttr(myChecker+'.outColor', myMaterial+'.color')\n\n    return myMaterial\n\n\ndef ApplyMaterialToSelectedMesh(material):\n    global selected_objects\n    # Gets the selected objects and applies the new material\n    cmds.select(selected_objects)\n    cmds.hyperShade(assign=material)\n\n\ndef QuickChecker():\n    global selected_objects\n    selected_objects = cmds.ls(sl=True)\n    myMaterial = NewCheckerMaterial()\n    ApplyMaterialToSelectedMesh(myMaterial)\n\n\ndef FunctionalTest1():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates a sphere\n    cmds.polySphere(n='Object001')\n    cmds.select('Object001')\n    # Runs the script\n    QuickChecker()\n\n\ndef FunctionalTest2():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates two spheres\n    cmds.polySphere(n='Object001')\n    cmds.polySphere(n='Object002')\n    # Moves the spheres\n    cmds.move(0, 0, 0, 'Object001')\n    cmds.move(2, 0, 0, 'Object002')\n    # Selects the spheres\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    # Runs the script\n    QuickChecker()\n\n\n# FunctionalTest1()\n# FunctionalTest2()\nQuickChecker()\n" 
+        -sourceType "python" 
+        -commandRepeatable 0
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 0
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Quick Texture Material" 
+        -enableBackground 0
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Quick Texture Material" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/quick_texture_material.png" 
+        -image1 "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/quick_texture_material.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import maya.cmds as cmds\n\n\nselected_objects = \"\"\n\n\n# TEST Reset the scene to the original state\ndef TestResetScene():\n    cmds.select(all=True)\n    cmds.delete()\n\n\n# TEST Reset hypeshade to the original state\ndef TestResetHypershade():\n    materials = cmds.ls(type='shadingDependNode')\n    cmds.delete(materials)\n\n\ndef NewCheckerMaterial():\n    # Creates a new lambert\n    myMaterial = cmds.shadingNode('lambert', asShader=True)\n    # Creates a shading node for the file\n    myChecker = cmds.shadingNode('checker', asTexture=True)\n\n    myPlaceTex = cmds.shadingNode('place2dTexture', asUtility=True)\n\n    cmds.setAttr(myPlaceTex+'.repeatU', 10)\n    cmds.setAttr(myPlaceTex+'.repeatV', 10)\n\n    cmds.connectAttr(myPlaceTex+'.outUV', myChecker+'.uv')\n\n    cmds.connectAttr(myPlaceTex+'.outUvFilterSize', myChecker+'.uvFilterSize')\n\n    cmds.connectAttr(myChecker+'.outColor', myMaterial+'.color')\n\n    return myMaterial\n\n\ndef ApplyMaterialToSelectedMesh(material):\n    global selected_objects\n    # Gets the selected objects and applies the new material\n    cmds.select(selected_objects)\n    cmds.hyperShade(assign=material)\n\n\ndef QuickChecker():\n    global selected_objects\n    selected_objects = cmds.ls(sl=True)\n    myMaterial = NewCheckerMaterial()\n    ApplyMaterialToSelectedMesh(myMaterial)\n\n\ndef FunctionalTest1():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates a sphere\n    cmds.polySphere(n='Object001')\n    cmds.select('Object001')\n    # Runs the script\n    QuickChecker()\n\n\ndef FunctionalTest2():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates two spheres\n    cmds.polySphere(n='Object001')\n    cmds.polySphere(n='Object002')\n    # Moves the spheres\n    cmds.move(0, 0, 0, 'Object001')\n    cmds.move(2, 0, 0, 'Object002')\n    # Selects the spheres\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    # Runs the script\n    QuickChecker()\n\n\n# FunctionalTest1()\n# FunctionalTest2()\nQuickChecker()\n" 
+        -sourceType "python" 
+        -commandRepeatable 0
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 0
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Clear Export Routine" 
+        -enableBackground 0
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Clear Export Routine" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/clean_export_routine.png" 
+        -image1 "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/clean_export_routine.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import maya.cmds as cmds\n\n\nselected_objects = \"\"\n\n\n# TEST Reset the scene to the original state\ndef TestResetScene():\n    cmds.select(all=True)\n    cmds.delete()\n\n\n# TEST Reset hypeshade to the original state\ndef TestResetHypershade():\n    materials = cmds.ls(type='shadingDependNode')\n    cmds.delete(materials)\n\n\ndef NewCheckerMaterial():\n    # Creates a new lambert\n    myMaterial = cmds.shadingNode('lambert', asShader=True)\n    # Creates a shading node for the file\n    myChecker = cmds.shadingNode('checker', asTexture=True)\n\n    myPlaceTex = cmds.shadingNode('place2dTexture', asUtility=True)\n\n    cmds.setAttr(myPlaceTex+'.repeatU', 10)\n    cmds.setAttr(myPlaceTex+'.repeatV', 10)\n\n    cmds.connectAttr(myPlaceTex+'.outUV', myChecker+'.uv')\n\n    cmds.connectAttr(myPlaceTex+'.outUvFilterSize', myChecker+'.uvFilterSize')\n\n    cmds.connectAttr(myChecker+'.outColor', myMaterial+'.color')\n\n    return myMaterial\n\n\ndef ApplyMaterialToSelectedMesh(material):\n    global selected_objects\n    # Gets the selected objects and applies the new material\n    cmds.select(selected_objects)\n    cmds.hyperShade(assign=material)\n\n\ndef QuickChecker():\n    global selected_objects\n    selected_objects = cmds.ls(sl=True)\n    myMaterial = NewCheckerMaterial()\n    ApplyMaterialToSelectedMesh(myMaterial)\n\n\ndef FunctionalTest1():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates a sphere\n    cmds.polySphere(n='Object001')\n    cmds.select('Object001')\n    # Runs the script\n    QuickChecker()\n\n\ndef FunctionalTest2():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates two spheres\n    cmds.polySphere(n='Object001')\n    cmds.polySphere(n='Object002')\n    # Moves the spheres\n    cmds.move(0, 0, 0, 'Object001')\n    cmds.move(2, 0, 0, 'Object002')\n    # Selects the spheres\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    # Runs the script\n    QuickChecker()\n\n\n# FunctionalTest1()\n# FunctionalTest2()\nQuickChecker()\n" 
+        -sourceType "python" 
+        -commandRepeatable 0
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 0
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Even Selection" 
+        -enableBackground 0
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Even Selection" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/even_selection.png" 
+        -image1 "/Users/Giorgio/Library/Preferences/Autodesk/maya/2017/prefs/icons/even_selection.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import maya.cmds as cmds\n\n\nselected_objects = \"\"\n\n\n# TEST Reset the scene to the original state\ndef TestResetScene():\n    cmds.select(all=True)\n    cmds.delete()\n\n\n# TEST Reset hypeshade to the original state\ndef TestResetHypershade():\n    materials = cmds.ls(type='shadingDependNode')\n    cmds.delete(materials)\n\n\ndef NewCheckerMaterial():\n    # Creates a new lambert\n    myMaterial = cmds.shadingNode('lambert', asShader=True)\n    # Creates a shading node for the file\n    myChecker = cmds.shadingNode('checker', asTexture=True)\n\n    myPlaceTex = cmds.shadingNode('place2dTexture', asUtility=True)\n\n    cmds.setAttr(myPlaceTex+'.repeatU', 10)\n    cmds.setAttr(myPlaceTex+'.repeatV', 10)\n\n    cmds.connectAttr(myPlaceTex+'.outUV', myChecker+'.uv')\n\n    cmds.connectAttr(myPlaceTex+'.outUvFilterSize', myChecker+'.uvFilterSize')\n\n    cmds.connectAttr(myChecker+'.outColor', myMaterial+'.color')\n\n    return myMaterial\n\n\ndef ApplyMaterialToSelectedMesh(material):\n    global selected_objects\n    # Gets the selected objects and applies the new material\n    cmds.select(selected_objects)\n    cmds.hyperShade(assign=material)\n\n\ndef QuickChecker():\n    global selected_objects\n    selected_objects = cmds.ls(sl=True)\n    myMaterial = NewCheckerMaterial()\n    ApplyMaterialToSelectedMesh(myMaterial)\n\n\ndef FunctionalTest1():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates a sphere\n    cmds.polySphere(n='Object001')\n    cmds.select('Object001')\n    # Runs the script\n    QuickChecker()\n\n\ndef FunctionalTest2():\n    # Resets everything\n    TestResetScene()\n    TestResetHypershade()\n    # Creates two spheres\n    cmds.polySphere(n='Object001')\n    cmds.polySphere(n='Object002')\n    # Moves the spheres\n    cmds.move(0, 0, 0, 'Object001')\n    cmds.move(2, 0, 0, 'Object002')\n    # Selects the spheres\n    cmds.select('Object001')\n    cmds.select('Object002', add=True)\n    # Runs the script\n    QuickChecker()\n\n\n# FunctionalTest1()\n# FunctionalTest2()\nQuickChecker()\n" 
+        -sourceType "python" 
+        -commandRepeatable 0
+        -flat 1
+    ;
+
+} 
