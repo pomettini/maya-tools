@@ -12,7 +12,7 @@ global proc shelf_AIV () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Boolean Utilities" 
+        -annotation "Boolean Utilities: Does a boolean intersection and preserves the two intersectated meshes" 
         -enableBackground 0
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
@@ -43,7 +43,7 @@ global proc shelf_AIV () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Quick References Setup" 
+        -annotation "Quick References Setup: Loads and positions reference images on the scene automatically" 
         -enableBackground 0
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
@@ -74,7 +74,7 @@ global proc shelf_AIV () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Quick Texture Material" 
+        -annotation "Quick Texture Material: Quickly creates a new material from an image" 
         -enableBackground 0
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
@@ -105,7 +105,7 @@ global proc shelf_AIV () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Clear Export Routine" 
+        -annotation "Clear Export Routine: Merges all the meshes, sets pivot in the bottom center, freezes transforms and deletes history" 
         -enableBackground 0
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
