@@ -2,6 +2,10 @@
 
 Maya scripts I made in order to speed up my workflow
 
+# How to install the shelf
+
+I made a [custom installer for those tools](https://github.com/Pomettini/maya-tools-installer). One click and you're done!
+
 # How to load scripts on Maya
 
 * Open Maya (whatever version is fine)
