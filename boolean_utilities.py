@@ -89,17 +89,17 @@ def BU_FunctionalTest4():
 	BU_IntersectionPreserveMeshes()
 
 def BU_InitUI():
-	win_name = 'diff_intersection'
+	bu_win_name = 'diff_intersection'
 
-	if cmds.window(win_name, q=True, ex=True):
-		cmds.deleteUI(win_name)
+	if cmds.window(bu_win_name, q=True, ex=True):
+		cmds.deleteUI(bu_win_name)
 
-	cmds.window(win_name, t='Boolean Utilities')
-	cmds.window(win_name, e=True, height=100, width=300, sizeable=False)
+	cmds.window(bu_win_name, t='Boolean Utilities')
+	cmds.window(bu_win_name, e=True, height=100, width=300, sizeable=False)
 	cmds.columnLayout(adj=True)
 	cmds.button(l='Difference + Intersection', height=50, c=Callback(BU_DiffIntersection))
 	cmds.button(l='Intersection (Preserve Meshes)', height=50, c=Callback(BU_IntersectionPreserveMeshes))
 	cmds.setParent('..')
-	cmds.showWindow(win_name)
+	cmds.showWindow(bu_win_name)
 
 BU_InitUI()
