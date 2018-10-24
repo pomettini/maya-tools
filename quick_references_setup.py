@@ -5,7 +5,6 @@ Puts plane references in the scene automatically
 Based on top, side and front
 TODO:
 * Make a level for each reference
-* Function and global variables needs prefixes!
 '''
 
 import maya.cmds as cmds
@@ -24,7 +23,7 @@ class QSR_PlaneType(object):
 
 
 # All the stuff about the reference planes will be put here
-planes = {}
+qsr_planes = {}
 
 
 # TEST Reset the scene to the original state
@@ -58,9 +57,9 @@ def QSR_LoadImagePath(planeType):
 
 
 def QSR_SetImagePath(planeType, imagePath):
-    global planes
+    global qsr_planes
     # I put the image path on the planes dictionary
-    planes[planeType] = imagePath
+    qsr_planes[planeType] = imagePath
 
 
 def QSR_RefreshUIImgPath(planeType, imagePath):
@@ -68,15 +67,15 @@ def QSR_RefreshUIImgPath(planeType, imagePath):
 
 
 def QSR_EmptyImgPath(planeType):
-    global planes
+    global qsr_planes
     # I remove the plane from the dictionary and empty the text field
-    del planes[planeType]
+    del qsr_planes[planeType]
     cmds.textField(planeType+'_field', edit=True, tx=str(''))
 
 
 def QSR_RefreshAllUIImgPath():
-    for plane in planes:
-        RefreshUIImgPath(plane, planes[plane])
+    for plane in qsr_planes:
+        RefreshUIImgPath(plane, qsr_planes[plane])
 
 
 def QSR_RemoveAllPlaneReferences():
@@ -87,7 +86,7 @@ def QSR_RemoveAllPlaneReferences():
 
 
 def QSR_CreatePlane(planeType):
-    global planes
+    global qsr_planes
 
     planeSize = cmds.intSliderGrp('plane_size', q=True, v=True)
     planeDistance = cmds.intSliderGrp('plane_distance', q=True, v=True)
@@ -160,7 +159,7 @@ def QSR_CreateMaterialFromPath(texturePath):
 
 
 def QSR_SearchReferencesInFolder():
-    global planes
+    global qsr_planes
 
     refDir = cmds.fileDialog2(dialogStyle=1, fileMode=3)
 
@@ -178,17 +177,17 @@ def QSR_SearchReferencesInFolder():
             continue
 
         if re.search(r'top', file):
-            planes[QSR_PlaneType.TOP] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.TOP] = directory+'/'+file
         elif re.search(r'bottom', file):
-            planes[QSR_PlaneType.BOTTOM] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.BOTTOM] = directory+'/'+file
         elif re.search(r'left', file):
-            planes[QSR_PlaneType.SIDE_L] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.SIDE_L] = directory+'/'+file
         elif re.search(r'right', file):
-            planes[QSR_PlaneType.SIDE_R] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.SIDE_R] = directory+'/'+file
         elif re.search(r'front', file):
-            planes[QSR_PlaneType.FRONT] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.FRONT] = directory+'/'+file
         elif re.search(r'back', file):
-            planes[QSR_PlaneType.BACK] = directory+'/'+file
+            qsr_planes[QSR_PlaneType.BACK] = directory+'/'+file
 
     RefreshAllUIImgPath()
 
@@ -209,25 +208,25 @@ def QSR_EnableBackfaceCulling(meshName):
 
 
 def QSR_GeneratePlanes():
-    global planes
+    global qsr_planes
 
     QSR_CreateReferenceLayer()
 
-    for planeType in planes:
+    for planeType in qsr_planes:
         plane = QSR_CreatePlane(planeType)
-        QSR_ApplyTexture(plane, planes[planeType])
+        QSR_ApplyTexture(plane, qsr_planes[planeType])
         QSR_AddMeshToReferenceLayer(plane)
         QSR_EnableBackfaceCulling(plane)
 
 
 def QSR_FunctionalTest():
-    global planes
+    global qsr_planes
 
     QSR_TestResetHypershade()
     QSR_TestResetScene()
     QSR_TestResetLayers()
 
-    planes = {
+    qsr_planes = {
         'top': '/Users/Giorgio/Desktop/TestBlueprints/top.png',
         'bottom': '/Users/Giorgio/Desktop/TestBlueprints/ref_bottom.png',
         'side_l': '/Users/Giorgio/Desktop/TestBlueprints/left.png',
@@ -240,13 +239,13 @@ def QSR_FunctionalTest():
 
 
 def QSR_InitUI():
-    win_name = 'quick_ref_setup'
+    qsr_win_name = 'quick_ref_setup'
 
-    if cmds.window(win_name, q=True, ex=True):
-        cmds.deleteUI(win_name)
+    if cmds.window(qsr_win_name, q=True, ex=True):
+        cmds.deleteUI(qsr_win_name)
 
-    cmds.window(win_name, t='Quick References Setup')
-    cmds.window(win_name, e=True, height=100, width=600, sizeable=False)
+    cmds.window(qsr_win_name, t='Quick References Setup')
+    cmds.window(qsr_win_name, e=True, height=100, width=600, sizeable=False)
     cmds.columnLayout(adj=True)
 
     cmds.intSliderGrp('plane_size', f=True, l='Plane Size', minValue=1, maxValue=10, value=5)
@@ -293,7 +292,7 @@ def QSR_InitUI():
     cmds.button(label='Load from folder', h=50, w=200, c=Callback(QSR_SearchReferencesInFolder))
     cmds.button(label='Generate', h=50, w=200, c=Callback(QSR_GeneratePlanes))
     cmds.setParent('..')
-    cmds.showWindow(win_name)
+    cmds.showWindow(qsr_win_name)
 
 
 QSR_InitUI()
