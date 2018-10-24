@@ -3,7 +3,6 @@
 '''
 Puts plane references in the scene automatically
 Based on top, side and front
-
 TODO:
 * Make a level for each reference
 * Function and global variables needs prefixes!
@@ -15,7 +14,7 @@ import re
 
 
 # Enumerator that contains all the Plane types
-class PlaneType(object):
+class QSR_PlaneType(object):
     TOP = 'top'
     BOTTOM = 'bottom'
     SIDE_L = 'side_l'
@@ -29,24 +28,24 @@ planes = {}
 
 
 # TEST Reset the scene to the original state
-def TestResetScene():
+def QSR_TestResetScene():
     cmds.select(all=True)
     cmds.delete()
 
 
 # TEST Reset hypeshade to the original state
-def TestResetHypershade():
+def QSR_TestResetHypershade():
     materials = cmds.ls(type='shadingDependNode')
     cmds.delete(materials)
 
 
 # TEST Removes all the layers
-def TestResetLayers():
+def QSR_TestResetLayers():
     layers = cmds.ls(type='displayLayer')
     cmds.delete(layers)
 
 
-def LoadImagePath(planeType):
+def QSR_LoadImagePath(planeType):
     imgFilter = 'All Image files (*.jpg *.gif *.png);;'
     imgPath = cmds.fileDialog2(fileFilter=imgFilter, dialogStyle=1, fileMode=1)
 
@@ -58,36 +57,36 @@ def LoadImagePath(planeType):
         cmds.confirmDialog(m='Please enter a valid image path')
 
 
-def SetImagePath(planeType, imagePath):
+def QSR_SetImagePath(planeType, imagePath):
     global planes
     # I put the image path on the planes dictionary
     planes[planeType] = imagePath
 
 
-def RefreshUIImgPath(planeType, imagePath):
+def QSR_RefreshUIImgPath(planeType, imagePath):
     cmds.textField(planeType+'_field', edit=True, tx=str(imagePath))
 
 
-def EmptyImgPath(planeType):
+def QSR_EmptyImgPath(planeType):
     global planes
     # I remove the plane from the dictionary and empty the text field
     del planes[planeType]
     cmds.textField(planeType+'_field', edit=True, tx=str(''))
 
 
-def RefreshAllUIImgPath():
+def QSR_RefreshAllUIImgPath():
     for plane in planes:
         RefreshUIImgPath(plane, planes[plane])
 
 
-def RemoveAllPlaneReferences():
+def QSR_RemoveAllPlaneReferences():
     # I remove all the planes, materials and the reference layer
     refElements = cmds.ls('ref_*')
     cmds.delete(refElements)
     cmds.delete('ReferenceLayer')
 
 
-def CreatePlane(planeType):
+def QSR_CreatePlane(planeType):
     global planes
 
     planeSize = cmds.intSliderGrp('plane_size', q=True, v=True)
@@ -99,35 +98,35 @@ def CreatePlane(planeType):
     if planeDistance is -1:
         planeDistance = -halfSize
 
-    if planeType == PlaneType.TOP:
+    if planeType == QSR_PlaneType.TOP:
         # Top
         plane = cmds.polyPlane(n='ref_top', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 1, 0))
         cmds.setAttr(plane[0]+'.translate', 0, -planeDistance, 0)
 
-    elif planeType == PlaneType.BOTTOM:
+    elif planeType == QSR_PlaneType.BOTTOM:
         # Bottom
         plane = cmds.polyPlane(n='ref_bottom', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 1, 0))
         cmds.setAttr(plane[0]+'.translate', 0, (planeSize + planeDistance), 0)
         cmds.setAttr(plane[0]+'.rotate', 0, 0, 180)
 
-    elif planeType == PlaneType.SIDE_L:
+    elif planeType == QSR_PlaneType.SIDE_L:
         # Left Side
         plane = cmds.polyPlane(n='ref_side_l', w=planeSize, h=planeSize, sx=1, sy=1, ax=(1, 0, 0))
         cmds.setAttr(plane[0]+'.translate', (halfSize + planeDistance), halfSize, 0)
         cmds.setAttr(plane[0]+'.rotate', 180, 0, 180)
 
-    elif planeType == PlaneType.SIDE_R:
+    elif planeType == QSR_PlaneType.SIDE_R:
         # Rignt Side
         plane = cmds.polyPlane(n='ref_side_r', w=planeSize, h=planeSize, sx=1, sy=1, ax=(1, 0, 0))
         cmds.setAttr(plane[0]+'.translate', -(halfSize + planeDistance), halfSize, 0)
         cmds.setAttr(plane[0]+'.rotate', 0, 0, 0)
 
-    elif planeType == PlaneType.FRONT:
+    elif planeType == QSR_PlaneType.FRONT:
         # Front
         plane = cmds.polyPlane(n='ref_front', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 0, 1))
         cmds.setAttr(plane[0]+'.translate', 0, halfSize, -(halfSize + planeDistance))
 
-    elif planeType == PlaneType.BACK:
+    elif planeType == QSR_PlaneType.BACK:
         # Back
         plane = cmds.polyPlane(n='ref_back', w=planeSize, h=planeSize, sx=1, sy=1, ax=(0, 0, 1))
         cmds.setAttr(plane[0]+'.translate', 0, halfSize, (halfSize + planeDistance))
@@ -136,14 +135,14 @@ def CreatePlane(planeType):
     return plane
 
 
-def ApplyTexture(mesh, texturePath):
-    material = CreateMaterialFromPath(texturePath)
+def QSR_ApplyTexture(mesh, texturePath):
+    material = QSR_CreateMaterialFromPath(texturePath)
     cmds.select(mesh[0])
     cmds.hyperShade(assign=material)
     cmds.rename(material, mesh[0]+'_mat')
 
 
-def CreateMaterialFromPath(texturePath):
+def QSR_CreateMaterialFromPath(texturePath):
     # Creates a new lambert
     myMaterial = cmds.shadingNode('lambert', asShader=True)
     # Creates a shading node for the file
@@ -160,7 +159,7 @@ def CreateMaterialFromPath(texturePath):
     return myMaterial
 
 
-def SearchReferencesInFolder():
+def QSR_SearchReferencesInFolder():
     global planes
 
     refDir = cmds.fileDialog2(dialogStyle=1, fileMode=3)
@@ -179,54 +178,54 @@ def SearchReferencesInFolder():
             continue
 
         if re.search(r'top', file):
-            planes[PlaneType.TOP] = directory+'/'+file
+            planes[QSR_PlaneType.TOP] = directory+'/'+file
         elif re.search(r'bottom', file):
-            planes[PlaneType.BOTTOM] = directory+'/'+file
+            planes[QSR_PlaneType.BOTTOM] = directory+'/'+file
         elif re.search(r'left', file):
-            planes[PlaneType.SIDE_L] = directory+'/'+file
+            planes[QSR_PlaneType.SIDE_L] = directory+'/'+file
         elif re.search(r'right', file):
-            planes[PlaneType.SIDE_R] = directory+'/'+file
+            planes[QSR_PlaneType.SIDE_R] = directory+'/'+file
         elif re.search(r'front', file):
-            planes[PlaneType.FRONT] = directory+'/'+file
+            planes[QSR_PlaneType.FRONT] = directory+'/'+file
         elif re.search(r'back', file):
-            planes[PlaneType.BACK] = directory+'/'+file
+            planes[QSR_PlaneType.BACK] = directory+'/'+file
 
     RefreshAllUIImgPath()
 
 
-def CreateReferenceLayer():
+def QSR_CreateReferenceLayer():
     # I create the Ref layer once and set it as a reference layer
     if not cmds.objExists('ReferenceLayer'):
         cmds.createDisplayLayer(n='ReferenceLayer', empty=True)
         cmds.setAttr('ReferenceLayer.displayType', 2)
 
 
-def AddMeshToReferenceLayer(meshName):
+def QSR_AddMeshToReferenceLayer(meshName):
     cmds.editDisplayLayerMembers('ReferenceLayer', meshName)
 
 
-def EnableBackfaceCulling(meshName):
+def QSR_EnableBackfaceCulling(meshName):
     cmds.setAttr(meshName[0]+'.backfaceCulling', 3)
 
 
-def GeneratePlanes():
+def QSR_GeneratePlanes():
     global planes
 
-    CreateReferenceLayer()
+    QSR_CreateReferenceLayer()
 
     for planeType in planes:
-        plane = CreatePlane(planeType)
-        ApplyTexture(plane, planes[planeType])
-        AddMeshToReferenceLayer(plane)
-        EnableBackfaceCulling(plane)
+        plane = QSR_CreatePlane(planeType)
+        QSR_ApplyTexture(plane, planes[planeType])
+        QSR_AddMeshToReferenceLayer(plane)
+        QSR_EnableBackfaceCulling(plane)
 
 
-def FunctionalTest():
+def QSR_FunctionalTest():
     global planes
 
-    TestResetHypershade()
-    TestResetScene()
-    TestResetLayers()
+    QSR_TestResetHypershade()
+    QSR_TestResetScene()
+    QSR_TestResetLayers()
 
     planes = {
         'top': '/Users/Giorgio/Desktop/TestBlueprints/top.png',
@@ -237,10 +236,10 @@ def FunctionalTest():
         'back': '/Users/Giorgio/Desktop/TestBlueprints/img-back.png'
     }
 
-    GeneratePlanes()
+    QSR_GeneratePlanes()
 
 
-def InitUI():
+def QSR_InitUI():
     win_name = 'quick_ref_setup'
 
     if cmds.window(win_name, q=True, ex=True):
@@ -254,48 +253,48 @@ def InitUI():
     cmds.intSliderGrp('plane_distance', f=True, l='Plane Distance', minValue=-1, maxValue=10, value=-1)
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Top', c=Callback(LoadImagePath, PlaneType.TOP))
+    cmds.button(label='Select Top', c=Callback(QSR_LoadImagePath, QSR_PlaneType.TOP))
     cmds.textField('top_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.TOP))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.TOP))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Bottom', c=Callback(LoadImagePath, PlaneType.BOTTOM))
+    cmds.button(label='Select Bottom', c=Callback(QSR_LoadImagePath, QSR_PlaneType.BOTTOM))
     cmds.textField('bottom_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.BOTTOM))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.BOTTOM))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Left Side', c=Callback(LoadImagePath, PlaneType.SIDE_L))
+    cmds.button(label='Select Left Side', c=Callback(QSR_LoadImagePath, QSR_PlaneType.SIDE_L))
     cmds.textField('side_l_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.SIDE_L))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.SIDE_L))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Right Side', c=Callback(LoadImagePath, PlaneType.SIDE_R))
+    cmds.button(label='Select Right Side', c=Callback(QSR_LoadImagePath, QSR_PlaneType.SIDE_R))
     cmds.textField('side_r_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.SIDE_R))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.SIDE_R))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Front', c=Callback(LoadImagePath, PlaneType.FRONT))
+    cmds.button(label='Select Front', c=Callback(QSR_LoadImagePath, QSR_PlaneType.FRONT))
     cmds.textField('front_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.FRONT))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.FRONT))
     cmds.setParent('..')
 
     cmds.rowLayout(adj=True, nc=3)
-    cmds.button(label='Select Back', c=Callback(LoadImagePath, PlaneType.BACK))
+    cmds.button(label='Select Back', c=Callback(QSR_LoadImagePath, QSR_PlaneType.BACK))
     cmds.textField('back_field', w=450)
-    cmds.button(label=' X ', c=Callback(EmptyImgPath, PlaneType.BACK))
+    cmds.button(label=' X ', c=Callback(QSR_EmptyImgPath, QSR_PlaneType.BACK))
     cmds.setParent('..')
 
     cmds.rowLayout(nc=3)
-    cmds.button(label='Remove References', h=50, w=200, c=Callback(RemoveAllPlaneReferences))
-    cmds.button(label='Load from folder', h=50, w=200, c=Callback(SearchReferencesInFolder))
-    cmds.button(label='Generate', h=50, w=200, c=Callback(GeneratePlanes))
+    cmds.button(label='Remove References', h=50, w=200, c=Callback(QSR_RemoveAllPlaneReferences))
+    cmds.button(label='Load from folder', h=50, w=200, c=Callback(QSR_SearchReferencesInFolder))
+    cmds.button(label='Generate', h=50, w=200, c=Callback(QSR_GeneratePlanes))
     cmds.setParent('..')
     cmds.showWindow(win_name)
 
 
-InitUI()
-# FunctionalTest()
+QSR_InitUI()
+# QSR_FunctionalTest()
