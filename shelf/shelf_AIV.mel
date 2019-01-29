@@ -6,8 +6,6 @@ global proc shelf_AIV () {
 
     shelfButton
         -enableCommandRepeat 0
-        -flexibleWidthType 3
-        -flexibleWidthValue 32
         -enable 1
         -width 35
         -height 34
@@ -16,7 +14,6 @@ global proc shelf_AIV () {
         -preventOverride 0
         -annotation "Boolean Utilities: Does a boolean intersection and preserves the two intersectated meshes" 
         -enableBackground 0
-        -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Boolean Utilities" 
@@ -40,8 +37,6 @@ global proc shelf_AIV () {
     ;
     shelfButton
         -enableCommandRepeat 0
-        -flexibleWidthType 3
-        -flexibleWidthValue 32
         -enable 1
         -width 35
         -height 34
@@ -50,7 +45,6 @@ global proc shelf_AIV () {
         -preventOverride 0
         -annotation "Quick References Setup: Loads and positions reference images on the scene automatically" 
         -enableBackground 0
-        -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Quick References Setup" 
@@ -74,8 +68,6 @@ global proc shelf_AIV () {
     ;
     shelfButton
         -enableCommandRepeat 0
-        -flexibleWidthType 3
-        -flexibleWidthValue 32
         -enable 1
         -width 35
         -height 34
@@ -84,7 +76,6 @@ global proc shelf_AIV () {
         -preventOverride 0
         -annotation "Quick Texture Material: Quickly creates a new material from an image" 
         -enableBackground 0
-        -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Quick Texture Material" 
@@ -108,8 +99,6 @@ global proc shelf_AIV () {
     ;
     shelfButton
         -enableCommandRepeat 0
-        -flexibleWidthType 3
-        -flexibleWidthValue 32
         -enable 1
         -width 35
         -height 34
@@ -118,7 +107,6 @@ global proc shelf_AIV () {
         -preventOverride 0
         -annotation "Clear Export Routine: Merges all the meshes, sets pivot in the bottom center, freezes transforms and deletes history" 
         -enableBackground 0
-        -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Clear Export Routine" 
@@ -142,8 +130,6 @@ global proc shelf_AIV () {
     ;
     shelfButton
         -enableCommandRepeat 0
-        -flexibleWidthType 3
-        -flexibleWidthValue 32
         -enable 1
         -width 35
         -height 34
@@ -152,7 +138,6 @@ global proc shelf_AIV () {
         -preventOverride 0
         -annotation "Even Selection" 
         -enableBackground 0
-        -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Even Selection" 
