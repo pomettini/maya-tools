@@ -41,7 +41,7 @@ def CER_MergeAllMeshes():
 	# Put the selection to an array
 	selection = cmds.ls(sl=True)
 	# If you have at least two objects, it merges them
-	if len(selection) > 1:
+	if len(selection) > 2:
 		cmds.polyUnite(*selection, name='FinalModel')
 
 def CER_SetPivotToBottomCenter():
